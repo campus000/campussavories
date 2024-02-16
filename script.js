@@ -238,26 +238,22 @@ function printReceipt() {
 }
 */
 
-
 function printReceipt() {
-    const receiptContent = generateReceiptContent(); // Generate the receipt content, which is an array of strings
+  const receiptContent = generateReceiptContent(); // Generate the receipt content, which is an array of strings
 
-    // Map each content item to a sendTextData promise
-    const sendPromises = receiptContent.map(contentItem => sendTextData(contentItem));
+  // Map each content item to a sendTextData promise
+  const sendPromises = receiptContent.map(contentItem => sendTextData(contentItem));
 
-    // Wait for all send operations to complete
-    Promise.all(sendPromises)
-        .then(() => {
-            clearAddedItems(); // Clear added items after printing
-        })
-        .catch(error => {
-            // Handle printing errors
-            console.error("Error printing receipt: ", error); // Consider informing the user through UI instead of console
- 
-
-
-
-
+  // Wait for all send operations to complete
+  Promise.all(sendPromises)
+      .then(() => {
+          clearAddedItems(); // Clear added items after printing
+      })
+      .catch(error => {
+          // Handle printing errors
+          console.error("Error printing receipt: ", error); // Consider informing the user through UI instead of console
+      });
+}
 
 
 
