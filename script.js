@@ -454,8 +454,8 @@ function updateSummary() {
   totalSpan.textContent = total.toFixed(2);
 }
 
-
-function generateReceiptContent() {
+/*
+ function generateReceiptContent() {
   const currentDate = new Date();
 const formattedDate = currentDate.toDateString();
 const formattedTime = currentDate.toLocaleTimeString();
@@ -524,6 +524,64 @@ content += '--------------------------------\n';
   return content;
 }
  
+*/
+function generateReceiptContent(addedItems) {
+  const currentDate = new Date();
+  const formattedTime = currentDate.toLocaleTimeString();
+
+  let content = [];
+
+  // Header with Rectangle around "Campus savories" and spaces added
+  content.push('--------------------------------');
+  content.push('        Campus savories         ');     
+  content.push('--------------------------------');
+  content.push(`Bill No.: #1`);
+  content.push('GST No-29ABEPS2937F1ZF');
+  content.push(`Time.:  ${formattedTime}`);  
+  content.push('--------------------------------');
+  content.push('          INVOICE ');
+  content.push('--------------------------------');
+  content.push('Item        Quantity      Amount');
+
+  let totalAmount = 0;
+
+  // Loop through added items and display them in the table
+  addedItems.forEach(item => {
+    const itemCost = item.price * item.quantity;
+    const truncatedName = item.name.slice(0, 10);
+    const itemRow = `${truncatedName.padEnd(14)}${item.quantity.toString().padEnd(10)}${itemCost.toFixed(2)}`;
+
+    content.push(itemRow);
+
+    // If the item name is too long, add the remaining part on the next line
+    if (item.name.length > 10) {
+      content.push(item.name.slice(10));
+    }
+
+    totalAmount += itemCost;
+  });
+
+  content.push('--------------------------------');
+  content.push(`Total Amount:         Rs ${totalAmount.toFixed(2)}`);
+
+  // Calculate 5% tax (GST) on the total amount
+  const tax = totalAmount * 0.05;
+  content.push(`GST (5%):             Rs ${tax.toFixed(2)}`);
+
+  // Calculate the grand total by adding the tax to the total amount
+  const grandTotal = totalAmount + tax;
+  const roundedGrandTotal = Math.round(grandTotal);
+
+  // Calculate the round-off amount
+  const roundOff = roundedGrandTotal - grandTotal;
+  content.push(`Round Up:             Rs ${roundOff.toFixed(2)}`);
+
+  // Add the rounded grand total
+  content.push(`Grand Total:          Rs ${roundedGrandTotal.toFixed(2)}`);
+  content.push('--------------------------------');
+
+  return content;
+}
 
 // Call the function to create buttons from CSV
 createButtonsFromCSV();
