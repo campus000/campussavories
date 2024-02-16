@@ -524,8 +524,14 @@ content += '--------------------------------\n';
   return content;
 }
  
-*/
-function generateReceiptContent(addedItems) {
+*/ 
+
+
+
+
+
+
+function generateReceiptContent() {
   const currentDate = new Date();
   const formattedTime = currentDate.toLocaleTimeString();
 
@@ -533,11 +539,11 @@ function generateReceiptContent(addedItems) {
 
   // Header with Rectangle around "Campus savories" and spaces added
   content.push('--------------------------------');
-  content.push('        Campus savories         ');     
+  content.push('        Campus savories         ');
   content.push('--------------------------------');
   content.push(`Bill No.: #1`);
   content.push('GST No-29ABEPS2937F1ZF');
-  content.push(`Time.:  ${formattedTime}`);  
+  content.push(`Time.:  ${formattedTime}`);
   content.push('--------------------------------');
   content.push('          INVOICE ');
   content.push('--------------------------------');
@@ -546,42 +552,45 @@ function generateReceiptContent(addedItems) {
   let totalAmount = 0;
 
   // Loop through added items and display them in the table
-  addedItems.forEach(item => {
-    const itemCost = item.price * item.quantity;
-    const truncatedName = item.name.slice(0, 10);
-    const itemRow = `${truncatedName.padEnd(14)}${item.quantity.toString().padEnd(10)}${itemCost.toFixed(2)}`;
+  for (const item in addedItems) {
+    const itemName = item.toString(); // Use the item itself as the name
+    const itemCost = addedItems[item].price * addedItems[item].quantity;
 
+    // Item Row with adjusted spacing and line break for long item names
+    const itemRow = `${itemName.slice(0, 10).padEnd(14)}${addedItems[item].quantity.toString().padEnd(10)}${itemCost.toFixed(2)}`;
     content.push(itemRow);
 
     // If the item name is too long, add the remaining part on the next line
-    if (item.name.length > 10) {
-      content.push(item.name.slice(10));
+    if (itemName.length > 10) {
+      content.push(`${itemName.slice(10)}`);
     }
 
     totalAmount += itemCost;
-  });
+  }
 
   content.push('--------------------------------');
   content.push(`Total Amount:         Rs ${totalAmount.toFixed(2)}`);
-
   // Calculate 5% tax (GST) on the total amount
   const tax = totalAmount * 0.05;
-  content.push(`GST (5%):             Rs ${tax.toFixed(2)}`);
 
   // Calculate the grand total by adding the tax to the total amount
   const grandTotal = totalAmount + tax;
-  const roundedGrandTotal = Math.round(grandTotal);
 
-  // Calculate the round-off amount
+  content.push(`GST (5%):             Rs  ${tax.toFixed(2)}`);
+  const roundedGrandTotal = grandTotal % 1 === 0 ? grandTotal : Math.ceil(grandTotal);
+
+  // Calculate the round-off amount (always positive)
   const roundOff = roundedGrandTotal - grandTotal;
-  content.push(`Round Up:             Rs ${roundOff.toFixed(2)}`);
+  // Calculate the round off amount
+  content.push(`Round Up:             Rs  ${roundOff.toFixed(2)}`);
 
   // Add the rounded grand total
-  content.push(`Grand Total:          Rs ${roundedGrandTotal.toFixed(2)}`);
+  content.push(`Grand Total:          Rs ${Math.round(roundedGrandTotal).toFixed(2)}`);
   content.push('--------------------------------');
 
   return content;
 }
+
 
 // Call the function to create buttons from CSV
 createButtonsFromCSV();
