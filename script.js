@@ -240,7 +240,7 @@ function printReceipt() {
 
 function printReceipt() {
   const receiptContent = generateReceiptContent(); // Generate the receipt content, which is an array of strings
-
+alert(receiptContent);
   // Map each content item to a sendTextData promise
   const sendPromises = receiptContent.map(contentItem => sendTextData(contentItem));
 
