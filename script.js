@@ -166,7 +166,7 @@ function handleSuccessfulPrint(orderDetails) {
     billNumber++;
 }
   
-  function printReceipt() {
+/*  function printReceipt() {
     const receiptContent = generateReceiptContent(); // Generate the receipt content
 
     // Check the size of the receipt content
@@ -220,8 +220,34 @@ handleSuccessfulPrint({
                 //alert("Error printing receipt: " + error);
             });
     }
+}*/
+
+
+function printReceipt() {
+    const receiptContent = generateReceiptContent(); // Generate the receipt content
+
+    // Print the receipt content directly
+    sendTextData(receiptContent)
+        .then(() => {
+            clearAddedItems(); // Clear added items after printing
+        })
+        .catch(error => {
+            // Handle printing errors
+            //alert("Error printing receipt: " + error);
+        });
 }
 
+
+
+
+
+
+
+
+
+
+
+  
      function sendPrinterData() {
     sendTextData()
       .then(() => {
