@@ -67,7 +67,7 @@ function printReceipt() {
         });
 }
 */
-
+/*
 function printReceipt() {
   const receiptContent = generateReceiptContent(); // Generate the receipt content, which is an array of strings
 alert(receiptContent);
@@ -83,6 +83,34 @@ alert(receiptContent);
           // Handle printing errors
           console.error("Error printing receipt: ", error); // Consider informing the user through UI instead of console
       });
+}
+*/
+  function printReceipt() {
+    const receiptContent = generateReceiptContent(); // Generate the receipt content
+
+    let index = 0;
+
+    function sendNextLine() {
+        if (index < receiptContent.length) {
+            const line = receiptContent[index];
+
+            sendTextData(line)
+                .then(() => {
+                    index++;
+                    sendNextLine(); // Send the next line recursively
+                })
+                .catch(error => {
+                    // Handle printing errors
+                    console.error("Error printing line: " + line + ". Error: " + error);
+                });
+        } else {
+            // All lines have been sent
+            clearAddedItems(); // Clear added items after printing
+        }
+    }
+
+    // Start sending lines
+    sendNextLine();
 }
 
 
