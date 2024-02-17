@@ -1,4 +1,60 @@
- /*function printReceipt() {    const receiptContent = generateReceiptContent(); // Generate the receipt content
+'use strict';
+document.addEventListener('WebComponentsReady', function () {
+  let progress = document.querySelector('#progress');
+  let dialog = document.querySelector('#dialog');
+  let message = document.querySelector('#message');
+  let printButton = document.querySelector('#print');
+  let printCharacteristic;
+  let index = 0;
+  let data;
+  progress.hidden = true;
+
+  let image = document.querySelector('#image');
+  // Use the canvas to get image data
+  let canvas = document.createElement('canvas');
+  // Canvas dimensions need to be a multiple of 40 for this printer
+  canvas.width = 120;
+  canvas.height = 120;
+  let context = canvas.getContext("2d");
+  context.drawImage(image, 0, 0, canvas.width, canvas.height);
+  let imageData = context.getImageData(0, 0, canvas.width, canvas.height).data;
+
+  function getDarkPixel(x, y) {
+    // Return the pixels that will be printed black
+    let red = imageData[((canvas.width * y) + x) * 4];
+    let green = imageData[((canvas.width * y) + x) * 4 + 1];
+    let blue = imageData[((canvas.width * y) + x) * 4 + 2];
+    return (red + green + blue) > 0 ? 1 : 0;
+  }
+
+   
+  function handleError(error) {
+    alert(error);
+    progress.hidden = true;
+    printCharacteristic = null;
+    dialog.open();
+  }
+
+   
+   
+
+  
+    function sendTextData(text) {
+      let encoder = new TextEncoder("utf-8");
+      // Add line feed + carriage return chars to text
+      let encodedText = encoder.encode(text+ '\u000A\u000D');
+      return printCharacteristic.writeValue(encodedText).then(() => {
+          console.log('Write done.');
+      });
+  }
+  
+ 
+ 
+   
+/*
+
+function printReceipt() {
+    const receiptContent = generateReceiptContent(); // Generate the receipt content
 
     // Print the receipt content directly
     sendTextData(receiptContent)
@@ -263,78 +319,7 @@ function updateSummary() {
   taxSpan.textContent = tax.toFixed(2);
   totalSpan.textContent = total.toFixed(2);
 }
-
-/*
- function generateReceiptContent() {
-  const currentDate = new Date();
-const formattedDate = currentDate.toDateString();
-const formattedTime = currentDate.toLocaleTimeString();
-
-  let content = '';
-
-  // Header with Rectangle around "Campus savories" and spaces added
-  content += '--------------------------------\n';
-
-  content += '        Campus savories         \n';     
-  content += '--------------------------------\n';
-content += `Bill No.: #1\n`;
-content += 'GST No-29ABEPS2937F1ZF\n';
- content += `Time.:  ${formattedTime}\n`;  content += '--------------------------------\n';
-
-content += '          INVOICE \n';
-content += '--------------------------------\n';
-
-content += 'Item        Quantity      Amount\n';
  
-
-let totalAmount = 0;
- 
-
-// Loop through added items and display them in the table
-for (const item in addedItems) {
-const itemName = item.toString(); // Use the item itself as the name
-const itemCost = addedItems[item].price * addedItems[item].quantity;
-
-// Item Row with adjusted spacing and line break for long item names
-//const itemRow = `${itemName}${addedItems[item].quantity.toString()}${itemCost.toFixed(2)}\n`;
-const itemRow = `${itemName.slice(0, 10).padEnd(14)}${addedItems[item].quantity.toString().padEnd(10)}${itemCost.toFixed(2)}\n`;
-//content += itemRow;
-content += itemRow;
-
-// If the item name is too long, add the remaining part on the next line
-if (itemName.length > 10) {
-  content += `${itemName.slice(10)}\n`;
-}
-
-totalAmount += itemCost;
-}
-
-content += '--------------------------------\n';
-content += `Total Amount:         Rs ${totalAmount.toFixed(2)}\n`;
-// Calculate 5% tax (GST) on the total amount
-const tax = totalAmount * 0.05;
-
-// Calculate the grand total by adding the tax to the total amount
-const grandTotal = totalAmount + tax;
-
-content += `GST (5%):             Rs  ${tax.toFixed(2)}\n`;
-const roundedGrandTotal = grandTotal % 1 === 0 ? grandTotal : Math.ceil(grandTotal);
-
-// Calculate the round-off amount (always positive)
-const roundOff = roundedGrandTotal - grandTotal;
-// Calculate the round off amount
-
-
-content += `Round Up:             Rs  ${roundOff.toFixed(2)}\n`;
-
-// Add the rounded grand total
-content += `Grand Total:          Rs ${Math.round(roundedGrandTotal).toFixed(2)}\n`;
-content += '--------------------------------\n';
-
-  return content;
-}
- 
-*/ 
 
 
 
